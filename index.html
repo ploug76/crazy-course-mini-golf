@@ -422,7 +422,7 @@ addEventListener('keydown',e=>{if(e.code=='KeyP'){togglePause();return}if(e.code
  if(state=='aim'){const st=e.shiftKey?.01:.05;if(e.code=='ArrowLeft'){aimA-=st;kbAim=true}else if(e.code=='ArrowRight'){aimA+=st;kbAim=true}else if(e.code=='ArrowUp'){aimP=CL(aimP+.04,.04,1);kbAim=true}else if(e.code=='ArrowDown'){aimP=CL(aimP-.04,.04,1);kbAim=true}else if(e.code=='Space'||e.code=='Enter'){if(kbAim)shoot(aimA,aimP);else kbAim=true}e.preventDefault()}});
 function togglePause(){if(state=='title')return;paused=!paused;$('pause').textContent=paused?'▶':'⏸'}
 $('pause').onclick=e=>{e.stopPropagation();togglePause()};window.musicPaused=()=>paused;
-$('help').onclick=e=>{e.stopPropagation();panel('<h2>⛳ Crazy Course Mini Golf</h2><p><b>Putt:</b> touch anywhere, <b>drag back</b> like a slingshot and release. The arrow shows direction; the ring shows power (green → yellow → red). Drag back to the start to cancel.</p><p><b>Keyboard:</b> ← → aim (Shift = fine), ↑ ↓ power, Space to show / putt.</p><p><b>Hazards & gadgets:</b> 🌊 water/lava = +1 stroke and replay from where you hit. Windmill blades, sliding blocks and spinning gates move — time it! Bumpers kick, slopes and hills curve the ball (arrows point downhill), sand grabs, ice slides, conveyors push, boosters launch, loops need speed, jump ramps fly, tunnels and teleporters keep your speed.</p><p><b>Scoring:</b> max '+MAXS+' strokes per hole (picked up = '+(MAXS+1)+'). Circles = under par, squares = over. Up to 4 players pass the phone; each player finishes the hole in turn.</p><p>P = pause, M = mute. Front 9, Back 9 or all 18!</p>')};
+$('help').onclick=e=>{e.stopPropagation();panel('<h2>⛳ Crazy Course Mini Golf</h2><p><b>Putt:</b> touch anywhere, <b>drag back</b> like a slingshot and release. The arrow shows direction; the ring shows power (green → yellow → red). Drag back to the start to cancel.</p><p><b>Keyboard:</b> ← → aim (Shift = fine), ↑ ↓ power, Space to show / putt.</p><p><b>Hazards & gadgets:</b> 🌊 water/lava = +1 stroke and replay from where you hit. Windmill blades, sliding blocks and spinning gates move — time it! Bumpers kick, slopes and hills curve the ball (arrows point downhill), sand grabs, ice slides, conveyors push, boosters launch, loops need speed, jump ramps fly, tunnels and teleporters keep your speed.</p><p><b>Scoring:</b> max <h3 class="gp-help">🎮 Controller</h3><p class="gp-help">Stick or D-pad ◀ ▶ aims, ▲ ▼ sets power, A shows / putts. On the title Y changes the number of players and A or Start tees off. Start pauses, Select mutes.</p>'+MAXS+' strokes per hole (picked up = '+(MAXS+1)+'). Circles = under par, squares = over. Up to 4 players pass the phone; each player finishes the hole in turn.</p><p>P = pause, M = mute. Front 9, Back 9 or all 18!</p>')};
 let lastT=0;function frame(now){requestAnimationFrame(frame);const dt=Math.min(.05,(now-lastT)/1000||0);lastT=now;if(state=='title'){T+=dt;drawMenu();return}if(!paused&&!panelOpen)update(dt);render()}
 resizeCanvas();chrome(true);
 window.__T={HOLES,buildHole,simShot,physStep,newBall,shotSpeed,get:()=>({state,holeI,cur,strokes,ball,players,T}),startGame,shoot,getH:()=>H,setH:h=>H=h,afterCard,nextAfterHole};
@@ -717,4 +717,20 @@ window.__unlock={unlocked:un,sample:window.__SAMPLE||null,get badge(){return las
 #palbList li{min-height:30px;height:auto!important;font-size:16px!important}
 .tb{width:46px!important;height:46px!important}#mute{right:55px!important}#help{right:104px!important}
 </style>
+<!-- gamepad:start -->
+<script src="gamepad.js?v=1"></script>
+<script>
+GamepadSupport.init({
+ keys:{left:'ArrowLeft',right:'ArrowRight',up:'ArrowUp',down:'ArrowDown',a:'Space',x:'Space',
+  start:function(p){GamepadSupport.key(state==='title'?'Enter':'KeyP',p)},back:'KeyM',
+  y:function(p){if(p&&state==='title'){nPlayers=nPlayers%4+1;ST.set('np',nPlayers)}}},
+ menuKeys:{x:'Enter'},
+ noRepeat:['a','x','y','start','back'],
+ ignoreSel:'#dock,#mute,#pause,#help,#inst,#ios,.tb,#dockHint',
+ backSel:'#pclose',
+ menu:function(){return !!document.querySelector('#palbOv.on,#smpLock.on')||panelOpen||state==='title'||paused;},
+ items:GamepadSupport.list(function(){return (document.querySelector('#palbOv.on,#smpLock.on')||panelOpen||state!=='title')?[]:menuBtns;})
+});
+</script>
+<!-- gamepad:end -->
 </body></html>
